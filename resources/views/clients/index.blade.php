@@ -28,15 +28,9 @@
                         </div>
                         <h3>{{$item->name}} </h3>
                         <p class="product-price"><span>Per Kg</span>  {{ number_format($item->price)  }} </p>
-                        <a onclick="event.preventDefault();document.getElementById('addToCart').submit()" class="cart-btn"><i class="fas fa-shopping-cart"></i> Add to Cart
-                        
-                           
+                       
                         </a>
-                        <form id="addToCart" action="{{ route('addToCart') }}" method="post">
-                            @csrf
-                            <input type="hidden" name="id" value="{{$item->id}}">
-                            <input type="hidden" name="quantity" id="qty" value="1">
-                        </form>
+                       
                     </div>
                 </div>
                 @endforeach
@@ -60,8 +54,6 @@
                         <li class="{{ $link->active ? 'active' : '' }}"><a href="{{ $link }}">{{ $link }}</a></li>
                         @endforeach
                        
-                        {{-- <li><a href="#">2</a></li>
-                        <li><a href="#">3</a></li> --}}
                         <li class="{{ $products->hasMorePages() ? '' : 'disabled' }}"><a href="{{ $products->nextPageUrl() }}">Next</a></li>
                     </ul>
                 </div>

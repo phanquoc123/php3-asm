@@ -15,21 +15,15 @@ class HomeController extends Controller
 
         //   
         $categories = DB::table('categories')->get();
-        // $products = DB::table('products')
-        // ->orderByDesc('id')
-        // ->limit(3)
-        // ->get();
-        
+       
         $products = Product::orderBy('id', 'desc')->paginate(3);
         
-
-
         return view('clients.index', compact('products','categories'));
     }
     public function shop(){
         $categories = DB::table('categories')->get();
 
-        $products = Product::orderBy('id', 'desc')->paginate(6);
+        $products = Product::orderBy('id', 'desc')->paginate(3);
 
         return view('clients.shop', compact('products','categories'));
     }
@@ -39,9 +33,6 @@ class HomeController extends Controller
         $product = Product::find($id);
         $categories = Category::all();
 
-        // $category = Category::find($id);
-        
-        // $relateProducts = $category->products;
         $allRelatedProducts = $product->category->products;
         $relatedProducts = $allRelatedProducts->except($product->id);
 
@@ -56,8 +47,7 @@ class HomeController extends Controller
     public function shopByCategory($categoryId){
 
         $categories = DB::table('categories')->get();
-
-        
+ 
         $category = Category::find($categoryId);
         $productsByCate = $category->products;
     

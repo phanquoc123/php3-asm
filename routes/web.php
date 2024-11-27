@@ -4,7 +4,10 @@ use App\Http\Controllers\admin\CategoryController;
 use App\Http\Controllers\authen\AuthenController;
 use App\Http\Controllers\client\CartController;
 use App\Http\Controllers\client\HomeController;
+use App\Http\Controllers\OrderController;
+use App\Http\Middleware\checkLogin;
 use App\Http\Middleware\isMember;
+use App\Models\Order;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -22,7 +25,7 @@ use Illuminate\Support\Facades\Route;
 //     return view('welcome');
 // });
 
-Route::get('login', [AuthenController::class , 'showFormLogin'])->name('login'); 
+Route::get('login', [AuthenController::class , 'showFormLogin'])->name('login')->middleware(checkLogin::class); 
 Route::post('login', [AuthenController::class , 'handleLogin']);
 Route::get('register', [AuthenController::class , 'showFormRegister'])->name('register'); 
 Route::post('register', [AuthenController::class , 'handleRegister']);
@@ -30,12 +33,6 @@ Route::post('logout', [AuthenController::class , 'logout'])->name('logout');
 
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
-// Route::get('/', [HomeController::class, 'index'])->name('home')->middleware(['auth',isMember::class]);
-
-
-// Route::get('login', [HomeController::class, 'showFormLoginClient'])->name('showFormLoginClient')->middleware(['auth',isMember::class]);
-
-// Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::get('/shop', [HomeController::class, 'shop'])->name('shop');
 Route::get('/search', [HomeController::class, 'search'])->name('search');
@@ -45,6 +42,9 @@ Route::get('{id}/shopByCategory', [HomeController::class, 'shopByCategory'])->na
 
 Route::get('/cart', [CartController::class , 'index'])->name('cart');
 Route::post('/addToCart', [CartController::class , 'addToCart'])->name('addToCart');
-Route::put('/updateQuantityCart', [CartController::class , 'updateQuantity'])->name('updateQuantityCart');
-Route::delete('/removeCart', [CartController::class , 'removeCartItem'])->name('removeCartItem');
-Route::delete('/clearCart', [CartController::class , 'clearAllCart'])->name('clearAllCart');
+// Route::put('/updateQuantityCart', [CartController::class , 'updateQuantity'])->name('updateQuantityCart');
+Route::delete('removeCartItem/{id}', [CartController::class , 'removeCartItem'])->name('removeCartItem');
+Route::get('/clearCart', [CartController::class , 'clearCart'])->name('clearCart');
+
+Route::get('/checkout', [OrderController::class ,'checkout'])->name('checkout');
+Route::post('/checkoutStore', [OrderController::class ,'checkoutStore'])->name('checkoutStore');

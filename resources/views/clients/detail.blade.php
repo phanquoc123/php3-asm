@@ -38,17 +38,20 @@
                     <p class="single-product-pricing"><span>Per Kg</span>{{$product->price }}</p>
                     <p>{{$product->description }}</p>
                     <div class="single-product-form">
-                        <form action="index.html">
-                            <input type="number" placeholder="0" value="1">
-                        </form>
-                        <a onclick="event.preventDefault();document.getElementById('addToCart').submit()" class="cart-btn"><i class="fas fa-shopping-cart"></i> Add to Cart
+                        <form  action="{{ route('addToCart') }}" method="post">
+                            @csrf
                         
-                            <form id="addToCart" action="{{ route('addToCart') }}" method="post">
-                                @csrf
-                                <input type="hidden" name="id" value="{{$product->id}}">
-                                <input type="hidden" name="quantity" id="qty" value="1">
-                            </form>
-                        </a>
+                            <input name="quantity" type="number" placeholder="0" value="1" min="1"> <br>
+                     
+                            <input name="productID" type="hidden"  value="{{$product->id}}">
+
+                        <button style="border: none; border-radius:50px;height:49px" type="submit"><a  class="cart-btn"><i class="fas fa-shopping-cart"></i> Add to Cart
+                       
+                        
+                      
+                    </a>
+                </button>
+                    </form>
                         <p><strong>Categories: </strong>{{ $product->category->name }}</p>
                     </div>
                     <h4>Share:</h4>

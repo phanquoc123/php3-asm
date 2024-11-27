@@ -58,4 +58,15 @@ class User extends Authenticatable
         return $this->type == self::TYPE_MEMBER;
 
     }
+    // public function products()
+    // {
+    //     return $this->hasMany(Product::class); 
+
+    // }
+    
+    public function cart()
+    {
+        return $this->belongsTo(Cart::class); 
+
+    }
 }

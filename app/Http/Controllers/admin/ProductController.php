@@ -11,37 +11,49 @@ use Illuminate\Support\Facades\Storage;
 class ProductController extends Controller
 {
 
-    
-        const PATH_VIEW = 'admin.product.';
 
-      
+    const PATH_VIEW = 'admin.product.';
 
-        public function index(){
 
-            $products = Product::all(); 
-            // $imageUrl = asset('storage/app' . $products->image);
-            // $products->restore();
-         
-            return view(self::PATH_VIEW . 'list', compact('products'));
-        }
 
-    public function create(){
-           
-        $categories = Category::query()->get();
+    public function index()
+    {
 
-        return view( self::PATH_VIEW . '.create', compact('categories'));
+        $products = Product::all();
+       
+        // $products->restore();
+
+
+        return view(self::PATH_VIEW . 'list', compact('products'));
     }
 
-    public function store(Request $request){
+    public function create()
+    {
+
+        $categories = Category::query()->get();
+
+        return view(self::PATH_VIEW . '.create', compact('categories'));
+    }
+
+    public function uploadFile(Request $request, $filename)
+    {
+        if ($request->hasFile($filename)) {
+            return $request->file($filename)->store('products');
+        }
+        return null;
+    }
+
+    public function store(Request $request)
+    {
 
         $data = $request->except('image');
         $validatedData = $request->validate([
-            'name' =>['required' , 'unique:products', 'max:255'],
+            'name' => ['required', 'unique:products', 'max:255'],
             'image' => ['required', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
-            'price' =>['required'],
-            'remaining_quantity' =>['required'],
-            'description' =>['required' ,'max:255'],
-            'category_id' =>['required'],
+            'price' => ['required'],
+            'remaining_quantity' => ['required'],
+            'description' => ['required', 'max:255'],
+            'category_id' => ['required'],
         ]);
 
         $data = [
@@ -50,49 +62,43 @@ class ProductController extends Controller
             'remaining_quantity' => $request['remaining_quantity'],
             'description' => $request['description'],
             'category_id' => $request['category_id'],
-         ];
-         if($request->hasFile('image')){
-            $path = $request->file('image')->store('products', 'public');
-            $data['image'] = $path;
-            // $data['image'] = Storage::put(self::PATH_UPLOAD , $request->file('image'));
-         }
+        ];
+        $data['image'] = $this->uploadFile($request, 'image');
 
-         Product::query()->create($data);
-         return redirect()->route('product.list')->withErrors($validatedData);
-
-
-
-
+        Product::query()->create($data);
+        return redirect()->route('product.list')->withErrors($validatedData);
     }
 
 
-    public function delete($id){
-      
+    public function delete($id)
+    {
+
         $products = Product::findOrFail($id); // Find the user with ID 1
 
         $products->delete();
 
         return redirect()->route('product.list');
-
     }
 
-    public function restore($id){
-       Product::onlyTrashed()->get();
-        Product::withTrashed()->where('id',$id)
-        ->restore();
+    public function restore($id)
+    {
+        Product::onlyTrashed()->get();
+        Product::withTrashed()->where('id', $id)
+            ->restore();
 
         return redirect()->route('product.list');
-
     }
 
-        public function edit($id){
-            $category = Category::all();
-            $product = Product::findOrFail($id);
+    public function edit($id)
+    {
+        $category = Category::all();
+        $product = Product::findOrFail($id);
 
-            return view(self::PATH_VIEW . '.edit', compact('category','product'));
-        }
+        return view(self::PATH_VIEW . '.edit', compact('category', 'product'));
+    }
 
-    public function update(Request $request , $id){
+    public function update(Request $request, $id)
+    {
 
         $product = Product::findOrFail($id);
 
@@ -100,12 +106,12 @@ class ProductController extends Controller
 
 
         $validatedData = $request->validate([
-            'name' =>['required' , 'unique:products', 'max:255'],
+            'name' => ['required', 'unique:products', 'max:255'],
             'image' => ['image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
-            'price' =>['required'],
-            'remaining_quantity' =>['required'],
-            'description' =>['required' ,'max:255'],
-            'category_id' =>['required'],
+            'price' => ['required'],
+            'remaining_quantity' => ['required'],
+            'description' => ['required', 'max:255'],
+            'category_id' => ['required'],
         ]);
 
         $data = [
@@ -114,28 +120,27 @@ class ProductController extends Controller
             'remaining_quantity' => $request['remaining_quantity'],
             'description' => $request['description'],
             'category_id' => $request['category_id'],
-         ];
-         if($request->hasFile('image')){
+        ];
+        if ($request->hasFile('image')) {
             $path = $request->file('image')->store('products', 'public');
             $data['image'] = $path;
             // $data['image'] = Storage::put(self::PATH_UPLOAD , $request->file('image'));
-         }
+        }
 
-         $currentCover = $product->image;
+        $currentCover = $product->image;
 
-         $product->update($data);
-           /**
-            * Việc xóa ảnh khi thay ảnh khi update phải làm sau khi update
-            * Tránh việc update không thành công mà đã mất file ảnh cũ
-            */
-            if($currentCover != "" &&  Storage::exists($currentCover)){
-              Storage::delete($currentCover);
-            }
-  
+        $product->update($data);
+        /**
+         * Việc xóa ảnh khi thay ảnh khi update phải làm sau khi update
+         * Tránh việc update không thành công mà đã mất file ảnh cũ
+         */
+        if ($currentCover != "" &&  Storage::exists($currentCover)) {
+            Storage::delete($currentCover);
+        }
+
         //   return back();
 
         //  Product::query()->update($id);
-         return redirect()->back()->withErrors($validatedData);
-
+        return redirect()->back()->withErrors($validatedData);
     }
 }
