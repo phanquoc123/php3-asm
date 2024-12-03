@@ -45,7 +45,7 @@ class OrderController extends Controller
            $total = $subtotal + $shipping;
         }
   
-        $user_infor = $user = User::select('name', 'email')->find($user->id);
+        $user_infor = User::select('name', 'email')->find($user->id);
       
         return view(
            'clients.checkout',
@@ -72,12 +72,12 @@ class OrderController extends Controller
          $validator = Validator::make($request->all(), [
             'user_name' => 'required|string|max:255',
             'user_email' => 'required|email|max:255',
-            'user_phone' => 'required|integer|max:10',
+            'user_phone' => 'required',
             'user_adress' => 'required|string|max:255',
             'shipping_name' => 'required|string|max:255',
             'shipping_email' => 'required|email|max:255',
             'shipping_adress' => 'required|string|max:255',
-            'shipping_phone' => 'required|integer|max:10',
+            'shipping_phone' => 'required',
         ]);
         
         if ($validator->fails()) {

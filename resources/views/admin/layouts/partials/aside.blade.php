@@ -47,6 +47,14 @@
              <span class="nav-text">Users</span>
            </a>
          </li>
+         <li
+         >
+          <a class="sidenav-item-link" href="{{ route('order.list') }}">
+            <i class="mdi mdi-account-group"></i>
+            <span class="nav-text">Orders</span>
+          </a>
+        </li>
+        
          
           
 

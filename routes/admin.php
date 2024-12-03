@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\admin\CategoryController;
 use App\Http\Controllers\admin\DashboardController;
+use App\Http\Controllers\admin\OrderController;
 use App\Http\Controllers\admin\ProductController;
 use App\Http\Controllers\admin\UserController;
 use App\Http\Controllers\authen\AdminController;
@@ -57,6 +58,18 @@ Route::group(['middleware' => 'auth'], function () {
                 Route::delete('delete/{id}', [UserController::class, 'delete'])->name('user.delete');
                 // Route::post('restore/{id}', [ProductController::class, 'restore'])->name('product.restore');
             });
+
+            ///// Orders Controller
+            Route::prefix('orders')->group(function () {
+                Route::get('list',           [OrderController::class, 'index'])->name('order.list');
+                Route::get('infor/{id}',         [OrderController::class, 'infor'])->name('order.infor');
+                
+                Route::get('edit/{id}',      [OrderController::class, 'edit'])->name('order.edit');
+                Route::put('update/{id}',    [OrderController::class, 'update'])->name('order.update');
+                Route::delete('delete/{id}', [OrderController::class, 'delete'])->name('order.delete');
+                // Route::post('restore/{id}', [ProductController::class, 'restore'])->name('product.restore');
+            });
+
 
 
             

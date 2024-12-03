@@ -58,11 +58,10 @@ class User extends Authenticatable
         return $this->type == self::TYPE_MEMBER;
 
     }
-    // public function products()
-    // {
-    //     return $this->hasMany(Product::class); 
-
-    // }
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
     
     public function cart()
     {

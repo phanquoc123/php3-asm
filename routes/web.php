@@ -4,6 +4,7 @@ use App\Http\Controllers\admin\CategoryController;
 use App\Http\Controllers\authen\AuthenController;
 use App\Http\Controllers\client\CartController;
 use App\Http\Controllers\client\HomeController;
+use App\Http\Controllers\client\PaymentController;
 use App\Http\Controllers\OrderController;
 use App\Http\Middleware\checkLogin;
 use App\Http\Middleware\isMember;
@@ -48,3 +49,4 @@ Route::get('/clearCart', [CartController::class , 'clearCart'])->name('clearCart
 
 Route::get('/checkout', [OrderController::class ,'checkout'])->name('checkout');
 Route::post('/checkoutStore', [OrderController::class ,'checkoutStore'])->name('checkoutStore');
+Route::post('/payment_vnpay',[PaymentController::class,'payment_vnpay'])->name('payment_vnpay');

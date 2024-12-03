@@ -161,15 +161,15 @@
                                 <tbody>
                                     <tr class="total-data">
                                         <td><strong>Subtotal:</strong></td>
-                                        <td>{{ number_format($subtotal) }}</td>
+                                        <td>{{ $subtotal  }}</td>
                                     </tr>
                                     <tr class="total-data">
                                         <td><strong>Shipping: </strong></td>
-                                        <td>{{ number_format($shipping) }}</td>
+                                        <td>{{ $shipping }}</td>
                                     </tr>
                                     <tr class="total-data">
                                         <td><strong>Total: </strong></td>
-                                        <td>{{ number_format($total) }}</td>
+                                        <td>{{ $total }}</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -191,19 +191,29 @@
 
                                 </form>
                             </div>
+                           
                         </div>
+                        <form action="{{ route('payment_vnpay') }}" method="POST">
 
+                            @csrf
+                           
+                            <input type="hidden" name="total" value="{{ $total }}">
+                            <button type="submit" name="redirect" style=" background-color: #F28123;
+                            border: none;
+                             color: white;
+                             padding: 12px 30px;
+                             text-align: center;
+                             text-decoration: none;
+                             display: inline-block;
+                             font-size: 16px;
+                             margin: 4px 2px;
 
-                        {{-- <div class="coupon-section">
-						<h3>Apply Coupon</h3>
-						<div class="coupon-form-wrap">
-							<form action="index.html">
-								<p><input type="text" placeholder="Coupon"></p>
-								<p><input type="submit" value="Apply"></p>
-							</form>
-						</div>
-					</div> --}}
+                             border-radius: 12px;
+                             cursor: pointer;" 
+                              class="boxed-btn black">VNPAY Payment</button>
+                        </form>
                     </div>
+                    
                 </div>
             </div>
         </div>

@@ -14,6 +14,15 @@
                     </ul>
                 </div>
             @endif
+            
+        <div class="mt-5">
+            @if (session('success'))
+            <div class="alert alert-success">
+                {{ session('success') }}
+            </div>
+            
+        @endif
+        </div>
             <input type="hidden" value="{{ $product->id }}">
             <div class="form-group">
                 <label for="exampleFormControlInput3">Name</label>
@@ -48,7 +57,7 @@
                     <option value="">All</option>
                     @foreach ($category as $cate)
                         <option
-                         @if ($product->id === $cate->id)
+                         @if ($product->category_id === $cate->id)
                              selected
                          @endif
                         value="{{ $cate->id }}">{{ $cate->name }}</option>
@@ -57,7 +66,7 @@
             </div>
             <div class="form-footer mt-4">
                 <button type="submit" class="btn btn-primary btn-pill">Submit</button>
-                <button type="submit" class="btn btn-light btn-pill">Cancel</button>
+                
             </div>
         </form>
     </div>

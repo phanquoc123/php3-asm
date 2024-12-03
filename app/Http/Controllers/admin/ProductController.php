@@ -7,6 +7,8 @@ use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class ProductController extends Controller
 {
@@ -48,7 +50,7 @@ class ProductController extends Controller
 
         $data = $request->except('image');
         $validatedData = $request->validate([
-            'name' => ['required', 'unique:products', 'max:255'],
+            'name' => ['required', 'unique:products',  'max:255'],
             'image' => ['required', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
             'price' => ['required'],
             'remaining_quantity' => ['required'],
@@ -73,9 +75,13 @@ class ProductController extends Controller
     public function delete($id)
     {
 
-        $products = Product::findOrFail($id); // Find the user with ID 1
+        $product = Product::findOrFail($id); // Find the user with ID 1
 
-        $products->delete();
+        if($product->image){
+            Storage::delete($product->image);
+        }
+
+        $product->delete();
 
         return redirect()->route('product.list');
     }
@@ -102,18 +108,19 @@ class ProductController extends Controller
 
         $product = Product::findOrFail($id);
 
-        $data = $request->except('image');
+        $data = $request->except('image');  
 
-
-        $validatedData = $request->validate([
-            'name' => ['required', 'unique:products', 'max:255'],
+        $validator = Validator::make($data,[
+            'name' => ['required','max:255'],
             'image' => ['image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
             'price' => ['required'],
             'remaining_quantity' => ['required'],
             'description' => ['required', 'max:255'],
             'category_id' => ['required'],
         ]);
-
+            if($validator->fails()){
+            return redirect()->back()->withErrors($validator);
+        }else{
         $data = [
             'name' => $request['name'],
             'price' => $request['price'],
@@ -121,26 +128,26 @@ class ProductController extends Controller
             'description' => $request['description'],
             'category_id' => $request['category_id'],
         ];
+
         if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('products', 'public');
-            $data['image'] = $path;
-            // $data['image'] = Storage::put(self::PATH_UPLOAD , $request->file('image'));
+            
+            $data['image'] = $this->uploadFile($request,'image');
+           
         }
 
-        $currentCover = $product->image;
+        $currentImage = $product->image;
 
         $product->update($data);
         /**
          * Việc xóa ảnh khi thay ảnh khi update phải làm sau khi update
          * Tránh việc update không thành công mà đã mất file ảnh cũ
          */
-        if ($currentCover != "" &&  Storage::exists($currentCover)) {
-            Storage::delete($currentCover);
+        if ($currentImage != "" &&  Storage::exists($currentImage)) {
+            Storage::delete($currentImage);
         }
-
-        //   return back();
-
-        //  Product::query()->update($id);
-        return redirect()->back()->withErrors($validatedData);
+        
+        return redirect()->back()->with('success','Cập nhật thành công');
+     } 
+        
     }
 }
